@@ -1,0 +1,915 @@
+\input{preambulo}
+\graphicspath{figures/}
+\numberwithin{equation}{section}
+%\usepackage{times,txfonts}
+%\usepackage{lmodern}
+%\usepackage{mathpazo}
+%\setlength\parindent{24pt}
+\title{Introduction to General Relativity}
+\author{Rodrigo Pereira Silva \\ University of São Paulo}
+\date{Summer, 2023}
+
+\begin{document}
+
+\maketitle
+\noindent
+During my investigations of General Relativity, I've noticed something that perpetuates along all the physical theories. Every physical theory has a physical motivation and background, but the tools necessary to work with it are mathematical. This mathematical ground plays a crucial role in General Relativity because it is heavy in the core of the theory.
+
+Hence, from now on the beginning of these notes will be dedicated to the underlying principles of differential geometry and vector spaces, with some physical examples to get some motivation and clarification. We can talk about physics later.
+
+The intuition behind General Relativity is that matter curves this entity called spacetime, and deforms it. Therefore, spacetime is a deformed and wrinkled \emph{thing}, and we have to do physics over it. To do physics over it, we need to define (and sometimes re-define) a series of properties that we usually expect from physical systems so we can calculate their properties, time-evolution, etc. Long story short: general relativity is an intrinsically geometric theory, so we need to learn geometry.
+
+Of course all of this is very informal and intuitive, and in order to formalize these things we need to digress a little. Let's begin with the very first mathematical structure if we want to talk about geometry, which is a topology.
+
+
+\section{Topology}
+The least amount of structure we can have in a spacetime theory is a topology. So we shall define it.
+
+\begin{definition}
+    Let $M$ be a set. A topology $\mathcal{O}$ is defined as a set $\mathcal{O} \subseteq \mathcal{P}(M)$\footnote{$\mathcal{P}(M)$ is called the superset of $M$, which is the set containing all the subsets of $M$.} satisfying
+    \begin{itemize}
+        \item[i.] $\varnothing \in \mathcal{O}$, and $M \in \mathcal{O}$
+        \item[ii.] $\forall \; V, U \in \mathcal{O} \Rightarrow V \cap U \in \mathcal{O}$
+        \item[iii.] $\forall \; U_\alpha \in \mathcal{O} \Rightarrow \bigcup_{\alpha \in A} U_\alpha \in \mathcal{O}$, where $A$ is a set of indices.
+    \end{itemize}
+\end{definition}
+
+\noindent
+So this is a topology. Notice that a topology is built upon a set. So, for all topology $\mathcal{O}$ there is an underlying set $M$.
+
+\begin{example}
+Take the simple set $M = \{ 1,2,3 \}$. Now, define $\mathcal{O}_1 := \{ \varnothing, \{1,2,3\} \}$. We shall proof that this is a topology:
+\begin{itemize}
+    \item[i.] Trivial
+    \item[ii.] Since $\varnothing \cap \{1,2,3\} = \varnothing \in \mathcal{O}_1$, this is satisfied.
+    \item[iii.] Since $\varnothing \cup \{1,2,3\} = \{1,2,3\} \in \mathcal{O}_1$, this is also satisfied.
+\end{itemize}
+
+Now define $\mathcal{O}_2 := \{ \varnothing, \{1\}, \{2\}, \{1,2,3\} \}$. We shall proof that this is not a topology:
+\begin{itemize}
+    \item[i.] Trivial.
+    \item[ii.] This is satisfied since $\{1,2,3\} \cap \{1\} = \{1\} \in \mathcal{O}_2$.
+    \item[iii.] Since $\{1\} \cup \{2\} = \{1,2\} \notin \mathcal{O}_2$, this is not a topology.
+\end{itemize}
+\qedwhite
+\end{example}
+
+This example shows that although there are many sets $\mathcal{O} \subseteq \mathcal{P}(M)$, not all of them can be called a topology. Now, the next example introduces two very important cases (and they are important because they are completely useless):
+
+\begin{example}
+There are two topologies that can be created over any set $M$. They are:
+\begin{enumerate}
+    \item $\mathcal{O}_{\text{discrete}} := \{\varnothing, \mathcal{P}(M) \}$
+    \item $\mathcal{O}_{\text{chaotic}} := \{\varnothing, M \}$.
+\end{enumerate}
+    \qedwhite
+\end{example}
+
+\begin{example}
+    Another important topology is what we call the standard topology, or $\mathcal{O}_{\text{std}}$. Here's the implicit definition of it:
+
+    \begin{definition}
+        Let $M = \mathbb{R}^d$, and $\mathcal{O}_{\text{std}} \subseteq \mathcal{P}(\mathbb{R}^d)$. 
+        Let a softball be 
+        \[
+            B_r(p) := \left\{ (q_1, ..., q_d) \Big| \sum_{i=1}^d (q_i - p_i)^2 < r^2 \right\} ,
+        \]
+        with $r \in \mathbb{R}^+$, $p \in \mathbb{R}^d$. We say that $\mathcal{U} \in \mathcal{O}_{\text{std}}$ iff
+        \[
+            \forall \; p \in \mathcal{U}: \exists \; r \in \mathbb{R}^+ : B_r (p) \subseteq \mathcal{U}.
+        \]
+    \end{definition}
+    \noindent
+    In other words, a set $\mathcal{U}$ is a subset of the standard topology if, and only if, for any point $p$ in $\mathcal{U}$, we can draw a circle of radius $r$ around it, and every point within this circle is still in $\mathcal{U}$.
+
+    \begin{remark}
+        This intuition is just a helper to understand the definition better. When we talk about sets, there is no structure other than a collection of elements. Although we use the terminology "softball" and "radius" to make it more friendly, there is no notion of a radius, let say distance, within a pure set.
+    \end{remark}
+\end{example}
+
+Now, a little bit of terminology:
+\begin{itemize}
+    \item $M$ is a set.
+    \item $\mathcal{O}$ is a topology, which is a set of open sets.
+    \item $(M, \mathcal{O})$ is called a topological space.
+    \item If $\mathcal{U} \in \mathcal{O}$, then $\mathcal{U}$ is an open set.
+    \item If $M \setminus A \in \mathcal{O}$, then $A$ is a closed set.
+\end{itemize}
+
+\subsection{Continuous maps}
+A map is defined as $f : M \longrightarrow N$. It means that $f$ is a rule that takes elements from set $M$ to set $N$. This question to be answered here is whether a map $f$ is continuous or not. And the answer is that it depends on the topologies chosen based on $M$ and $N$. So we shall define them as $\mathcal{O}_M$ as the topology constructed based on set $M$, and $\mathcal{O}_N$ as the topology constructed based on set $N$. Now, for the definition of continuity, we need first the definition of pre-image of a map:
+
+\begin{definition}
+    Let $f: M \longrightarrow N$, and let $V \subseteq N$. Then, we define the pre-image of $f$ as
+    \[
+        \text{preim}_f(V) := \{ m \in M | f(m) \in V \}.
+    \]
+\end{definition}
+
+Hence, the pre-image of a map are the set of all elements from $M$ that are mapped into $N$. Finally, we can define continuous maps:
+
+\begin{definition}
+    Let $(M, \mathcal{O}_M)$ and $(N, \mathcal{O}_N)$ be topological spaces. Then a map $f : M \longrightarrow N$ is called a \emph{continuous map} with respect to $\mathcal{O}_M$ and $\mathcal{O}_N$ if
+    \[
+        \forall \; V \in \mathcal{O}_N : \text{preim}_f(V) \in \mathcal{O}_M
+    \]
+\end{definition}
+
+This definition means that, a map is continuous iff the pre-images of all open sets in $N$ are open sets in $M$. Let's see an example:
+
+\begin{example}
+    Let $M = \{1,2\}$ and $N = \{1,2\}$. Then we define a map 
+    \begin{align*}
+    f:M \longrightarrow N \\
+    m \longmapsto f(m) := m
+    \end{align*}
+    that is the identity map. The underlying topologies $\mathcal{O}_M := \{ \varnothing, \{1\}, \{2\}, \{1,2\} \}$, and $\mathcal{O}_N := \{ \varnothing, \{1,2\} \}$. To check whether or not this is a continuous map, we have to look at the pre-images:
+    \begin{align*}
+        \text{preim}_f(\varnothing) = \varnothing \in \mathcal{O}_M, \\
+        \text{preim}_f(\{1,2\}) = M \in \mathcal{O}_M,
+    \end{align*}
+    then $f$ is continuous.
+
+    Now let us define the inverse identity function, which is of course is the identity function. But now, notice that
+    \begin{align*}
+    f:N \longrightarrow M \\
+    n \longmapsto f(n) := n
+    \end{align*}
+    Thinking about the underlying topologies, let's see the pre-images:
+    \begin{align*}
+        \text{preim}_{f^{-1}}(\{1\}) = \{1\} \notin \mathcal{O}_N,
+    \end{align*}
+    then $f^{-1}$ is not continuous.
+    \qedwhite
+\end{example}
+
+Henceforth, we see that even the identity function is not continuous, and the whole concept of continuity of maps is based on the underlying topologies defined for the topological spaces.
+
+\subsubsection{Composition of two continuous maps}
+Let $M \xlongrightarrow[]{f} N \xlongrightarrow[]{g} P$, but also the composition of these two functions, 
+\begin{align*}
+    f \circ g : N \longrightarrow P \\
+    m \longmapsto (g \circ f)(m) := g(f(m))
+\end{align*}
+
+Now that things are defined, we can enunciate the theorem:
+
+\begin{theorem}
+    Let $f: M \longrightarrow N$ and $g: N \longrightarrow P$ be two continuous functions. Then, the composition $f \circ g$ is also continuous.
+\end{theorem}
+
+The proof is not dificult:
+
+\begin{proof}
+    Let $V \in \mathcal{O}_P$ be a subset of the target set of the composite function, then:
+    \begin{IEEEeqnarray}{rCl}
+        \text{preim}_{g \circ f} (V) & := & \left\{ m \in M | (g \circ f)(m) \in V \right\} \nonumber \\
+        & = & \left\{ m \in M | f(m) \in \text{preim}_{g}(V) \right\} \nonumber \\
+        & = & \underbrace{\text{preim}_{f}\underbrace{(\text{preim}_{g}(V))}_{\in \mathcal{O}_N}}_{\in \mathcal{O}_M}
+    \end{IEEEeqnarray}
+    Henceforth, the composition is continuous.
+\end{proof}
+
+\subsection{Inheriting a Topology}
+Sometimes it is useful to define a topology from an already existing topological space. One particularly important way to inherit a topology when it comes to spacetime physics is described in this section. Let $M$ be a set with a topology already given, $\mathcal{O}_M$. Consider now a subset $S \subseteq M$. The question is: can one construct on $S$ a topology from $\mathcal{O}_M$ on $M$? The answer is yes, and here's how:
+
+\begin{definition}
+    The topology $\eval{\mathcal{O}}_{S} \subseteq \mathcal{P}(S)$ is said to be a subset topology when constructed like
+    \[
+        \eval{\mathcal{O}}_{S} := \{ \mathcal{U} \cap S | \mathcal{U} \in \mathcal{O}_M \}.
+    \]
+\end{definition}
+
+A result to consider is that, if we have a mapping $f$ taking elements from $M$ ($\mathcal{O}_M$) into $N$ ($\mathcal{O}_N$) that is continuous, and we have a restricted function defined as
+\[
+    \eval{f}_{S} := S \subseteq M \longrightarrow N
+\]
+then we can claim that this function is continuous if it was constructed as it was shown above (that is, if the topology from $S$ is the topology $\eval{\mathcal{O}}_{S}$).
+
+\section{Topological Manifolds}
+Now we can restrict even more our universe of possibilities. For spacetime physics, we may focus on a set of topological spaces $(M, \mathcal{O})$ that can be charted, in a very similar manner on how the Earth is charted in an atlas.
+
+\begin{definition}
+    A topological space $(M, \mathcal{O})$ is called a $d$-dimensional topological manifold if 
+    \[
+        \forall \; p \in M : \exists \; \mathcal{U} \in \mathcal{O} : \exists \; x : \mathcal{U} \longrightarrow x(\mathcal{U}) \subseteq \mathbb{R}^d
+    \]
+    where:
+    \begin{itemize}
+        \item $x$ is invertible: $\exists \; x^{-1}: x(\mathcal{U}) \longrightarrow \mathcal{U}$
+        \item $x$ is continuous.
+        \item $x^{-1}$ is continuous.
+    \end{itemize}
+\end{definition}
+
+Notice that the requirement of continuity for $x$ is addressable since  we have a topology for both the target and the domain set of the map $x$: the set $\mathcal{U} \subseteq M$, which has topology $\mathcal{O}$, and $\mathbb{R}^d$ has topology $\mathcal{O}_{\text{std}}$.
+
+This is fascinating. This definition is saying that, for all points in our set $M$, there is a subset $\mathcal{U} \in \mathcal{O}$, and there is a map $x$ that takes elements from this neighborhood $\mathcal{U}$ to an Euclidean $\mathbb{R}^d$ space. This accounts for the many figures showing a weird, wobbly picture with a map taking surfaces from this picture to a nice, flat space. This is what we want, for short: a topological space that, if you take a close look and focus your attention in a tiny part of it, it resembles $\mathbb{R}^d$. And this is good because that's where we know how to make physics.
+
+A bit of terminology: the tuple $(\mathcal{U}, x)$ is called a chart. And it is called a chart because there is a nice and pictorial way to look at these topological manifolds. Imagine that you are creating a map of the Earth; imagine what you need to do in order to accomplish this task: you have to take real-world objects (in here they lay in our $M$ set) and you have to make pictures of them, so you apply a map $x$ that creates this picture with certain characteristics. The key point is: there are many ways to create pictures of a real place, and these pictures do not affect at all the real place. This is precisely the relation of the chart produced by some \emph{specific} map $x$: you are making a massive choice by discarding all the other possible maps and, nevertheless, your real world (your topological space $(M, \mathcal{O})$) remains unaffected.
+
+\begin{definition}
+    An atlas $\mathcal{A}$ is a collection of charts:
+    \[
+        \mathcal{A} := \{ (\mathcal{U}_{(\alpha)}, x_{(\alpha)} | \alpha \in A \}
+    \]
+    if
+    \[
+        \bigcup_{\alpha \in A} U_\alpha = M.
+    \]
+\end{definition}
+
+Henceforth, an atlas is a collection of charts, as long as if union of the pre-images of $x$ reconstruct again the real world.
+
+\begin{definition}
+    A chart map is the map $x(p) = (x^1(p), x^2(p), ..., x^d(p))$ where each $x^i(p) := \mathcal{U} \longrightarrow \mathbb{R}$ is called a coordinate map.
+\end{definition}
+
+\subsection{Chart Transition Maps}
+
+Imagine two charts $(\mathcal{U}, x)$, and $(\mathcal{V}, y)$ with overlapping regions, that is, $\mathcal{U} \cap \mathcal{V} \neq \varnothing$. Now, take any point within the intersection of these sets. We can map them to $\mathbb{R}^d$ using either $x$ and $y$. The question here is: how can we make a transition of coordinates from $x$ to $y$, for example? And the answer is: given $p \in x(\mathcal{U \cap \mathcal{V}}) \subseteq \mathbb{R}^d$, take $x^{-1}(p) \in \mathcal{U} \cap \mathcal{V}$, and then apply the map $y$ in it to go to $y(\mathcal{U \cap \mathcal{V}}) \subseteq \mathbb{R}^d$. The whole process is then $y \circ x^{-1} := y(x^{-1}(p))$. This is called a chart transition map.
+
+Often it is desirable (or indeed the only way) to define properties of real-world objects by judging suitable conditions not on the real-world object itself, but on a chart-representative of that real world object.
+
+\section{Multilinear Algebra}
+It's not the case that we will equip our spacetime set with a vector space structure. Indeed, we have so far equipped it with a space topology structure. However, the tangent spaces (which shall be defined in its moment) $T_p M$ to a smooth manifold associated with a set $M$ has a vector space structure. And all the underlying vector and tensor manipulation done in General Relativity is done actually within this space. Long story short: we are going to talk about tensors now. But first, we need to define what a vector space is.
+
+\subsection{Vector Spaces}
+We shall promptly start with its definition.
+
+\begin{definition}
+    A $\mathbb{R}$-vector space $(V, \oplus, \odot)$ is a tuple with a set $V$, and two operations
+    \begin{align*}
+        \oplus : V \times V \longrightarrow V, \\
+        \odot : \mathbb{R} \times V \longrightarrow V,
+    \end{align*}
+    such that these operations satisfy:
+    \begin{itemize}
+        \item[i.]  $v \oplus w = w \oplus v$, $\forall \; v, w \in V$
+        \item[ii.] $(u \oplus v) \oplus w = u \oplus (v \oplus w)$, $\forall \; v, w, u \in V$
+        \item[iii.] $\exists \; 0 \in V: \forall \; v \in V: v\oplus0=v$
+        \item[iv.] $\forall \; v \in V: \exists \; (-v) \in V: v \oplus (-v) = 0$
+        \item[v.] $\lambda \odot (\mu \odot v) = (\lambda \cdot \mu) \odot v$, $\forall \; \lambda, \mu \in \mathbb{R}$
+        \item[vi.] $(\lambda + \mu) \odot v = \lambda \odot v + \mu \odot v$, $\forall \; \lambda, \mu \in \mathbb{R}$, $\forall \; v \in V$
+        \item[vii.] $\lambda \odot (v + w) = \lambda \odot v + \lambda \odot w$, $\forall \; \lambda \in \mathbb{R}$, $\forall \; v, w \in V$
+        \item[viii.] $1 \odot v = v$, $\forall v \in V$
+    \end{itemize}
+\end{definition}
+
+Notice that there is a clear distinction between the sum on the real numbers $+$ from the sum in the vector space $\oplus$; and the multiplication on the real numbers $\cdot$ and the multiplication in the vector space $\odot$. When elements from the real numbers interact between them, we have to use ordinary sum and multiplication. However, when they interact with a vector, then the structure defined within the vector space is needed. 
+
+\begin{remark}
+    The elements of a vector space is often referred to, informally, as a vector. It is important to notice that a set is not a vector space: it is necessary to define the operations $\oplus$ and $\odot$ such that it obeys the definition given above. 
+\end{remark}
+
+\begin{example}
+    Let $P:=\left\{ p: [-1, +1] \longrightarrow \mathbb{R} \Big| p(x) = \sum_{n=0}^N p_n \cdot x^n, p_n \in \mathbb{R} \right\}$, which is the set of polynomials of fixed degree.
+
+    The question is whether or not an element of this set $P$ is a vector, and the answer is a resounding no. There is nowhere any $\cdot$ or $+$ operation defined here. However, if we define
+    \begin{align*}
+        \oplus : P \times P \longrightarrow P \\
+        (p,q) \longmapsto p \oplus q: (p \oplus q)(x) := p(x) + q(x)
+    \end{align*}
+    and 
+    \begin{align*}
+        \odot : \mathbb{R} \times P \longrightarrow P \\
+        (\lambda,p) \longmapsto \lambda \odot p: (\lambda \odot p)(x) := \lambda \cdot p(x) 
+    \end{align*}
+    Now, we have indeed a vector space (because it is already known that these operations defined above satisfy the conditions in the definition of a vector space).
+    \qedwhite
+\end{example}
+
+Now, our next piece of information in the journey to define what a tensor is, is to define what a linear map from a vector space is.
+
+\subsection{Linear Maps}
+Let's begin with the definition, which is somehow very similar to the definition from linear maps in topological spaces.
+
+\begin{definition}
+    Let $(V, \oplus_V, \odot_V)$ and $(W, \oplus_W, \odot_W)$ be two vector spaces. Then a map
+    \[
+        \phi : V \longrightarrow W
+    \]
+    is called linear if
+    \begin{itemize}
+        \item[i.] $\phi(v \oplus_V w) = \phi(v) \oplus_W \phi(w)$ 
+        \item[ii.] $\phi(\lambda \odot_V v) = \lambda \odot_W \phi(v)$
+    \end{itemize}
+\end{definition}
+
+Notice, from the definition, that the addition and s-multiplication defined in $V$ and $W$ don't need to be the same. On the left-hand side of the definitions above, we are at vector space $(V, \oplus_V, \odot_V)$, while on the left side we were already taken to the target set $W$, with its $\oplus_W$ addition and $\odot_W$ s-multiplication. And also an important remark is that, in order to define or not the linearity of a map, we need to know the thorough structure of the vector spaces involved, e.g. we need to define addition and s-multiplication.
+
+\begin{example}
+    Using the same set $P$ of polynomials of fixed degree, we can define a differentiation operator
+    \begin{align*}
+        \delta: P \longrightarrow P \\
+        p \longmapsto \delta(p) := p'
+    \end{align*}
+    so $\delta$ is the derivative of the polynomial $p$. The usual rules of differentiation (sum rule and multiplication by a constant) provides us the proof that this operator is indeed linear according to the definition of a linear operator.
+    \qedwhite
+\end{example}
+
+Now, a bit of notation to make things a little less cluttered:
+
+\begin{notation}
+    The indication of a linear map can be expressed as simply
+    \[
+        \phi : V \xlongrightarrow[]{\sim} W.
+    \]
+\end{notation}
+
+Next, a theorem:
+\begin{theorem}
+    Let $(V, \oplus_V, \odot_V)$, $(W, \oplus_W, \odot_W)$, $(U, \oplus_U, \odot_U)$ be vector spaces. Now take the linear maps $\phi$ and $\psi$ such that
+    \[
+        V \xlongrightarrow[\sim]{\phi} W \xlongrightarrow[\sim]{\psi} U
+    \]
+    Then 
+    \[
+        \phi \circ \psi : V \longrightarrow U
+    \] 
+    is linear.
+\end{theorem}
+
+An immediate example of this theorem is the composition of two first-order derivatives, which is a second-order derivative. Second-order derivatives are as linear as any-order derivative.
+
+\subsection{Vector space of Homomorphisms}
+If we have two vector spaces $(V, \oplus_V, \odot_V)$, $(W, \oplus_W, \odot_W)$, $(U, \oplus_U, \odot_U)$, we can define the set of all linear maps between them, which is named the set of homomorphisms between $V$ and $W$, and it is simply defined as
+\[
+    \text{Hom}(V,W) := \{\phi : V \xlongrightarrow[]{\sim} W\}.
+\]
+The funny thing is that we can make turn this set into a vector space itself. It suffices to define the addition and multiplication for this set:
+\begin{align*}
+    \oplus_H : \text{Hom}(V,W) \times \text{Hom}(V,W) \longrightarrow \text{Hom}(V,W) \\
+    (\phi, \psi) \longmapsto \phi \oplus_H \psi
+\end{align*}
+where this new vector space $\text{Hom}(V,W)$ can inherit the addition and multiplication from its ``parent'' vector spaces, that is: 
+\[
+    (\phi \oplus_H \psi)(v) = \phi(v) \oplus_W \psi(v)
+\]
+And for s-multiplication, we have
+\begin{align*}
+    \odot : \mathbb{R} \times \text{Hom}(V,W) \longrightarrow \text{Hom}(V,W) \\
+    (\lambda,v) \longmapsto \lambda \odot_H v
+\end{align*}
+where
+\[
+    (\lambda \odot_H \phi)(v) := \lambda \odot_W \phi(v).
+\]
+therefore, $(\text{Hom}(V,W), \oplus_H, \odot_H)$ is a vector space. 
+
+\begin{example}
+    Let $\text{Hom}(P,P)$, where $P$ is the set of fixed degree polynomials. Then, $\delta \in \text{Hom}(P,P)$, as well as $\delta \circ \delta$. Also, any composition involving some multiplication and addition is an element of $\text{Hom}(P,P)$.
+    \qedwhite
+\end{example}
+
+\subsubsection{Dual spaces}
+The reason why this is a subsection of the Homomorphisms section is because this is a special case of Homomorphism, where we construct a set of all linear maps from $V$ to $\mathbb{R}$. That's it. Formally, we call this the dual space $V^*$ and we define it as follows:
+\begin{definition}
+    Let $(V, \oplus_V, \odot_V)$ and $(\mathbb{R}, +, \cdot)$ be vector spaces. Then the dual space $V^*$ is
+    \[
+        V^* : = \{ \phi : V \xlongrightarrow[]{\sim} \mathbb{R} \} = \text{Hom}(V,\mathbb{R}).
+    \]
+\end{definition}
+
+And since this is just a special case from Homomorphisms, it is immediate that $\text{Hom}(V,\mathbb{R})$ is also a vector space. A bit of terminology: an element of $V^*$ is called a covector.
+
+\begin{example}
+    Let $I : P \longrightarrow \mathbb{R}$, therefore $I \in P^*$. We can define $I$ as, for example,
+    \[
+        I(p) := \int_0^1 \dd{x} p(x),
+    \]
+    being the integral operator, which is known to be linear.
+    \qedwhite
+\end{example}
+
+Finally, we have all the ingredients necessary to introduce the notion of tensors.
+
+\subsection{Tensors}
+If you have a vector space and you consider its dual space, then you have all the building blocks necessary to construct your tensors, which consist of multilinear maps.
+
+\begin{definition}
+    Let $(V, \oplus_V, \odot_V)$ be a vector space. An $(r,s)$-tensor $T$ over $V$ is a multilinear map
+    \[
+        T : \underbrace{V^* \times ... \times V^*}_{r} \times \underbrace{V \times ... \times V }_{s} \xlongrightarrow[]{\sim} \mathbb{R}
+    \]
+\end{definition}
+
+Let's clear out what multilinearity means with an example:
+
+\begin{example}
+    If $T$ is a $(1,1)$-tensor, it means that it can have as input two entries: one covector and one vector, so
+    \[
+        T(\phi + \psi, v) = T(\phi, v) + T(\psi,v)
+    \]
+    where $\phi \in V^*$ and $v \in V$. To be multilinear means that
+    \[
+        T(\phi, v + w) = T(\phi, v) + T(\phi, w)
+    \]
+    and 
+    \[
+        T(\phi, \lambda v) = \lambda T(\phi, v).
+    \]
+    Finally,
+    \[
+        T(\phi + \psi, v + w) = T(\phi, v) + T(\phi, w) + T(\psi, v) + T(\psi, w).
+    \]
+    \qedwhite
+\end{example}
+
+Now, an example of a tensor.
+
+\begin{example}
+    Define the (0,2)-tensor
+    \[
+        g: \mathbb{P} \times \mathbb{P} \xlongrightarrow[]{\sim} \mathbb{R}
+    \]
+    where we can take
+    \[
+        (p,q) \longmapsto \int_0^1 \dd{x} p(x) q(x).
+    \]
+    \qedwhite
+\end{example}
+
+A nice piece of information is that vector and covectors are themselves tensors. The first result for covectors is immediate: $\phi \in V^* \Longleftrightarrow \phi : V \xlongrightarrow[]{\sim} \mathbb{R}$, then it is immediate that $\phi$ is a $(1,0)$-tensor.
+
+Now, for the vector, we have $v \in V = (V^*)^* \Longleftrightarrow v : V^* \xlongrightarrow[]{\sim} \mathbb{R}$, so $v$ is a $(0,1)$-tensor. Notice that the equality casually thrown there $V = (V^*)^*$ is not trivial at all, and only works for finite dimensional vector spaces. Of course we still don't know what a dimension is, but we can define it when we talk about a vector basis.
+
+\subsection{Bases}
+Basis are not very good for you. When you introduce a basis into your calculations, every result you obtain in conditioned to this basis. It means that when you choose a basis, you make an absolutely massive choice and collapse it into one: the basis you have chosen. This situation is very similar with choosing a chart for your topological space. With that being said, let's talk about basis.
+
+\begin{definition}
+    Let $(V, \oplus_V, \odot_V)$ be a vector space. A subset $B \subset V$ is called a basis if
+    \[
+        \forall \; v \in V \; \exists ! \; \text{finite} \; F \subset B: \exists ! \; (v^1,..., v^n) : v = \sum_{i=1}^n v^i f_i.
+    \]
+    where $F = \{f_k\}_{k=1}^n$.
+\end{definition}
+
+With this definition in hands, we can define what is the dimension of a vector space:
+
+\begin{definition}
+    If a vector space $(V, \oplus_V, \odot_V)$ has a basis $B \subset V$ with finitely many elements, say $d$ many, then we say that $\text{dim} V := d$.
+\end{definition}
+
+Now, a little remark on the components of a vector within a vector space with a chosen basis:
+
+\begin{remark}
+    Let $(V, \oplus_V, \odot_V)$ be a finite dimensional vector space. Having chosen a basis $e_1, ..., e_n$ of $(V, \oplus_V, \odot_V)$, we may uniquely associate 
+    \[
+        v \longmapsto (v^1, ..., v^n)
+    \]
+    which are called the components of $v$ with respect to a chosen basis. These components are such that
+    \[
+        v = v^1 e_1 +...+v^n e_n.
+    \]
+\end{remark}
+
+\subsubsection{A basis for the Dual Space}
+Having chosen the basis $(e_1, ..., e_n)$ for $V$, we can also choose a basis $(\epsilon^1, ..., \epsilon^n)$ for $V^*$. There is no reason why we couldn't choose completely independent basis for each set, but this introduces as double as much arbitrariness. Henceforth, it is desirable (and more economical) to choose the basis of the dual space based on the basis chosen for the vector space, and let them be attached somehow. 
+
+So, if $(e_1, ..., e_n)$ have been chosen, it is a nice practice to create a basis for the dual space as
+\begin{align*}
+    \epsilon^a(e_b) = \delta_b^a = \left\{
+    \begin{array}{c}
+    1, \; a = b  \\
+    0, \; a \neq b
+    \end{array}
+    \right.
+\end{align*}
+This uniquely determines the choice of $\epsilon$'s from the choice of $e$'s. In the case where the basis of the dual space $V^*$ satisfies this, we call this basis the \emph{dual basis}.
+
+\begin{example}
+    Let $P$ be the set of polynomials of fixed degree, equipped with the addition and s-multiplication, so we talk about a vector space. We choose the degree to be fixed at 3. Now, the basis to this vector space $(e_0, e_1, e_2, e_3)$ is given by $(1, x, x^2, x^3)$, so $e_a (x) := x^a$. Now, we can create the dual basis for this vector space as being
+    \[
+        \epsilon_a := \frac{1}{a!} \eval{\partial_x^a}_{x=0},
+    \]
+    where $\partial_x^a$ is the $a$th derivative with respect to $x$, and after the derivative is calculated, you evaluate it at $x=0$. It is immediately verifiable that this definition satisfies the requirements to be a dual basis.
+    \qedwhite
+\end{example}
+
+Now that we have talked about a basis, we can take a look at the components of a tensor.
+
+\subsubsection{Components of a tensor}
+The components of a tensor are defined as follows:
+
+\begin{definition}
+Let $T$ be an $(r,s)$-tensor on a finite dimensional vector space $V$, a basis $\{e_1, ...,e_n\}$ of $V$, and a dual basis $\{\epsilon^1, ..., \epsilon^n\}$ for $V^*$. Then, define the $(r + s)^{\text{dim}V}$ many real numbers
+\[
+    T^{i_1,...,i_r}_{j_1, ..., j_s} \in \mathbb{R} : = T(\epsilon^{i_1},..., \epsilon^{i_r}, e_{j_1}, ..., e_{j_s})
+\]
+where $i_1,...,i_r, j_1, ..., j_s \in \{1, ..., \text{dim}V \}$.
+\end{definition}
+
+Henceforth, the components of a $(r,s)$-tensor are defined based on the basis of the vector space $V$ and the dual vector space $V^*$, which is a natural way to define it.
+
+One really useful application of having a basis is that, once the components and the basis of the tensor are known, one can reconstruct the entire tensor. 
+
+\begin{example}
+    Let $T$ be a $(1,1)$-tensor. Then, each component of the tensor is defined as
+    \[
+        T^i_j := T(\epsilon^i, e_j)
+    \]
+    then
+    \begin{IEEEeqnarray*}{rCl}
+        T(\phi, v) & = & T \left( \sum_{i=1}^{\text{dim}V}\phi_i \epsilon^i, \sum_{j=1}^{\text{dim}V} v^j e_j \right) \\
+        & = & \sum_{i=1}^{\text{dim}V} \sum_{j=1}^{\text{dim}V} \phi_i v^j \underbrace{T(\epsilon^i, e_j)}_{T^i_j} \\
+        & = & \phi_i v^j T(\epsilon^i, e_j),
+    \end{IEEEeqnarray*}
+    \qedwhite
+\end{example}
+
+In the last line of this example I introduced the Einstein summation convention, which says that if you have an index upstairs and the same index downstairs in different components, there's an implicit summation occurring. This is possible simply because elements from basis $V$ are labeled with upstairs indices, while elements from basis $V^*$ are labeled with downstairs indices.
+
+\section{Differentiable Manifolds}
+Topological manifolds gives us the idea of continuity of curves that are in a topological space. Now we want somehow to associate a velocity of a curve as well. The idea of talking about differentiability of a curve is then very natural, and we want to address it now. A first question to be asked is whether or not the structure already given to a topological manifold is enough for us to talk about differentiability, and the answer is no.
+
+In order to talk about the differentiation of a curve in a topological manifold, we need to talk about charts, simply because we don't know how to differentiate a map that takes real numbers and throw them into a topological manifold, and that is precisely what a parameterized curve does:
+\[
+    \gamma : \mathbb{R} \longrightarrow M.
+\]
+The usual notion of differentiation lies in maps that takes elements from $\mathbb{R}$ into elements of $\mathbb{R}^d$, and in order to accomplish this in the context of topological manifolds, first we need to talk about charts. Of course charts are fantasies of the real world; it would be catastrophic if my notion of differentiability depended on the type of chart I chose to represent my manifold, because differentiability is a very intrinsic notion of a real-world object. To see how problematic it is, imagine a real-world sphere that I chose to represent with a differentiable chart on a Monday, but at Friday I chose to represent with a non-differentiable chart. This means that the same object---the real-world sphere---created a sharp edge during the week. All of a sudden, physics is not consistent anymore. This silly story serves to motivate us to define a kind of compatibility between charts, in a manner that they should not disagree in overlapping regions.
+
+\subsection{Compatible charts}
+Let $\mathcal{U}$ and $\mathcal{V}$ be two overlapping regions ($\mathcal{U} \cap \mathcal{V} \neq \varnothing$) of our manifold $(M, \mathcal{O})$. We can choose for each of these regions maps $x$ and $y$ such that they form charts, so we have $(\mathcal{U}, x)$ and $(\mathcal{V}, y)$. Now, while $x$ can map an overlapping region of the real-world into a chart,
+%
+\begin{equation*}
+    \mathbb{R} \xlongrightarrow[]{\gamma} \mathcal{U} \cap \mathcal{V}  \xlongrightarrow[]{x} x(\mathcal{U} \cap \mathcal{V} ) \subseteq \mathbb{R}^d
+\end{equation*}
+
+$y$ can do the same thing:
+%
+\begin{equation*}
+    \mathbb{R} \xlongrightarrow[]{\gamma} \mathcal{U} \cap \mathcal{V} \xlongrightarrow[]{y} y(\mathcal{U} \cap \mathcal{V} ) \subseteq \mathbb{R}^d
+\end{equation*}
+%
+the thing is: we can work with the composite functions $x \circ \gamma$ and $y \circ \gamma$ and their notions of differentiability because we know the domain and the image of these functions, but we need somehow to make sure that the notions established in the differentiability level by the map $x$ are not broken by the ones established by the map $y$.
+
+The way to tight these concepts together is to examine the chart transition map, given by
+\[
+    y \circ x^{-1}:\mathbb{R}^d \longrightarrow \mathbb{R}^d,
+\]
+since it gives us the opportunity to study the desired composition
+\[
+    y \circ \gamma = (y \circ x^{-1}) \circ (x \circ \gamma).
+\]
+Notice here that $x \circ \gamma : \mathbb{R} \longrightarrow \mathbb{R}^d$, and we know how to work with this. However, the first term of this composition $y \circ x^{-1}: \mathbb{R}^d \longrightarrow \mathbb{R}^d$ is, in general, only continuous (by the definition of a topological manifold). Hence, we have the composition of a (generally) continuous function with a differentiable function, and the result is (generally) a continuous function. So if we take any two charts $(\mathcal{U}, x)$, $(\mathcal{V}, y)$ and try to address the differentiability problem with no further constraints, we will fail. 
+
+Until this point, we are using any imaginable charts $(\mathcal{U},x)$, $(\mathcal{V},y)$ on the topological manifold $(M, \mathcal{O})$. In other words, we are taking $(\mathcal{U},x)$, $(\mathcal{V},y)$ from the \emph{maximal atlas} $\mathcal{A}$ of $(M, \mathcal{O})$. The concept of maximal atlas is simple: it is the set of all possible charts from a topological manifold. This is not what we want, and the set of charts need to be more restricted. Indeed, the answer is not really complicated: we just need to choose the charts that are compatible with respect to that operation. This seems a little circular, but we can finally define the compatibility of two charts.
+
+\begin{definition}
+    Two charts $(\mathcal{U},x)$, $(\mathcal{V},y)$ of a topological manifold are called $\clubsuit$-compatible if either:
+    \begin{itemize}
+        \item[(a)] $\mathcal{U} \cap \mathcal{V} = \varnothing$, or
+        \item[(b)] $\mathcal{U} \cap \mathcal{V} \neq \varnothing$ and the chart transition maps
+        \begin{align*}
+            y \circ x^{-1} : x(\mathcal{U} \cap \mathcal{V}) \subseteq \mathbb{R}^d \longrightarrow y(\mathcal{U} \cap \mathcal{V}) \subseteq \mathbb{R}^d  \\
+            x \circ y^{-1} : y(\mathcal{U} \cap \mathcal{V}) \subseteq \mathbb{R}^d \longrightarrow x(\mathcal{U} \cap \mathcal{V}) \subseteq \mathbb{R}^d 
+        \end{align*}
+        have the $\clubsuit$-property.
+    \end{itemize}
+\end{definition}
+
+\begin{definition}
+    An atlas $\mathcal{A}_\clubsuit$ is a $\clubsuit$-compatible atlas if any two charts in $\mathcal{A}_\clubsuit$ are $\clubsuit$-compatible.
+\end{definition}
+
+\begin{definition}
+    A $\clubsuit$-manifold is a triple $(M, \mathcal{O}, \mathcal{A}_\clubsuit)$.
+\end{definition}
+
+Let's take the obviously ridiculous $\clubsuit$ out of the way and say what this symbol can be in Table \ref{tab:flower}. We see that, by imposing more and more conditions on the transition functions, you get more and more restricted. Indeed, we didn't have to add any other extra structure in order to talk about differentiability of curves; what we had to do was to make a choice (hence, to add information into our already existing structure) in order to ``clean'' our atlas with bad-behaving charts. 
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{c|c|l}
+    $\clubsuit$ & Property known & Description \\ \hline \hline
+    $C^0$ & $C^0(\mathbb{R} \longrightarrow \mathbb{R})$ & Continuous maps with respect to $\mathcal{O}_{\text{std}}$ \\
+    $C^1$ & $C^1(\mathbb{R} \longrightarrow \mathbb{R})$ & Differentiable (once) and the result is continuous \\
+    $\vdots$ & $\vdots$ & $\vdots$ \\
+    $C^\infty$ & $C^\infty(\mathbb{R} \longrightarrow \mathbb{R})$ & Smooth manifold \\ \hline
+    \end{tabular}
+    \label{tab:flower}
+\end{table}
+
+Now, an important theorem:
+
+\begin{theorem}
+    Any $C^{k \geq 1}$-atlas $\mathcal{A}_{C^{k \geq 1}}$ contains a $C^{\infty}-atlas$.
+\end{theorem}
+
+What it means: if you can guarantee that you have an atlas with at least one $C^1$ transition function, then you can remove charts from it until you get an atlas with only smooth charts.
+
+\subsection{Diffeomorphisms}
+
+Consider the map $\phi : M \longrightarrow N$ where $M$ and $N$ are naked maps, that is, that don't have any further structure. Then, the structure-preserving maps are the bijections (which are the invertible maps). Otherwise, the map is not invertible and we can't fully recover one set from the other via the map $\phi$.
+
+\begin{example}
+    Consider the two sets $\{1,2,3\}$ and $\{a,b\}$. There is no possible map that preserves the structure of these two sets. We can map $(1,a)$ and $(2,b)$, but there's no pair for the element $3$. Hence, we would have to map 3 to either $a$ or $b$, making the map not invertible, whence not preserving set structure.
+    \qedwhite
+\end{example}
+
+We now many sets that have bijections between them: the set of natural numbers $\mathbb{N}$ have a bijection with the integers $\mathbb{Z}$, as well as with the rationals $\mathbb{Q}$, but not with the reals $\mathbb{R}$. We can now define what it means to be isomorphic:
+
+\begin{definition}
+    $M$ and $N$ are set theoretically isomorphic, and is denoted as $M \cong_{\text{set}} N$ if there is a bijection $\phi : M \longrightarrow N$.
+\end{definition}
+
+There is a multitude of ``-mophisms'', and all of them preserve a structure somehow of a set (not a naked set, but a set with more structure). The next case we talk about are homeomorphic sets.
+
+\begin{definition}
+    Consider two topological spaces $(M, \mathcal{O}_M)$, $(N, \mathcal{O}_N)$. If there is a bijection $\phi : M \longrightarrow N$, and both $\phi$ and $\phi^{-1}$ are continuous, they are said to be topologically isomorphic, or $(M, \mathcal{O}_M) \cong_{\text{top.}} (N, \mathcal{O}_N)$. This topological isomorphism is called homeomorphism.
+\end{definition}
+
+For a vector space, we can do a similiar definition:
+
+\begin{definition}
+    Consider two vector spaces $(V, \oplus_V, \odot_V)$ and $(W, \oplus_W, \odot_W)$. These vector spaces are said to be isomorphic if there is a bijection $\phi : V \longrightarrow W$ that is linear in both directions.
+\end{definition}
+
+Before the star of the section, which are diffeomorphic sets, we first need to define what are $C^\infty$ maps:
+
+\begin{definition}
+    Consider $\mathcal{U} \subset (M, \mathcal{O}_M)$ and $\mathcal{V} \subset (N, \mathcal{O}_N)$. Consider now
+    \[
+        \mathbb{R}^d \xlongleftarrow[]{x} \mathcal{U} \subseteq M \xlongrightarrow[]{\phi} \mathcal{V} \subseteq N \xlongrightarrow[]{y} \mathbb{R}^e
+    \]
+    If the transition map from $\mathbb{R}^d$ to $\mathbb{R}^e$, that is $y \circ \phi \circ x^{-1}$, is $C^\infty$, then we say that the maps are $C^\infty$.
+\end{definition}
+
+\noindent
+Now, we can define what a diffeomorphism is:
+
+\begin{definition}[Diffeomorphisms]
+    Two $C^\infty$ manifolds $(M, \mathcal{O}_M, \mathcal{A}_M)$, $(N, \mathcal{O}_N, \mathcal{A}_N)$ are said to be topologically diffeomorphic if there is a bijection $\phi : M \longrightarrow N$ such that $\phi$ and $\phi^{-1}$ are both $C^{\infty}$ maps.
+\end{definition}
+
+The idea here is that two diffeomorphic manifolds are somehow equivalent. They don't really have a shape yet, but we can guarantee at this point that they are smooth. A spear and a soccer ball are not diffeomorphic, but a soccer ball and any other smooth shape you can think of are diffeomorphic, and they are guaranteed to be diffeomorphic because if we find one $C^1$ map, then the theorem shows that we can remove charts from the atlas until the atlas is an $\mathcal{A}_\infty$ atlas.
+
+One last spooky fact is that there is uncountably finitely many number of $C^\infty$-manifolds that one can make out of a given $C^0$-manifold (if any) (up to diffeomorphism).
+
+\section{Tangent Spaces}
+The question that leads this section is: ``what is the velocity of a curve $\gamma$ at a point $p$''? We shall define it.
+
+\subsection{Velocity}
+We shall begin with a straight auxiliary definition.
+
+\begin{definition}
+    Let $(C^{\infty}, \oplus, \odot)$ be a vector space, where 
+    \[
+        C^\infty := \{f:M\longrightarrow \mathbb{R} | \text{$f$ is smooth}\}
+    \]
+    equipped with
+    \begin{itemize}
+        \item[i.] $(f \oplus g)(p) := f(p) + g(p)$
+        \item[ii.] $(\lambda \odot g)(p) := \lambda \cdot g(p)$
+    \end{itemize}
+\end{definition}
+
+Now we can properly define a velocity:
+
+\begin{definition}[Velocity]
+    Consider a smooth manifold $(M, \mathcal{O}, \mathcal{A})$, a curve $\gamma : \mathbb{R} \longrightarrow M$ at least $C^1$, and suppose $\gamma(\lambda_0) = p$.
+    The velocity of $\gamma$ at $p$ is the linear map
+    \[
+        v_{\gamma, p} : C^\infty(M) \xlongrightarrow[]{\sim} \mathbb{R}
+    \]
+    and this velocity is defined as
+    \[
+        v_{\gamma, p}(f) := (f \circ \gamma)'(\lambda_0)
+    \]
+\end{definition}
+
+It is not straightforward to define the velocity as a linear map that depends on a smooth function $f$, but the intuition is not far: imagine that you are running along a path $\gamma$ in the real world (which in our models is described as the smooth manifold), and you experience a temperature around you, which is described by this smooth function $f$ that takes your position in the manifold and spits a real number (which is the measurement of the temperature at that location). The velocity is then how this temperature in the world in changing at that particular point $p$. The definition of the velocity is hence the directional derivative.
+
+\subsection{Tangent vector space}
+
+\begin{definition}[Tangent Space]
+    For each point $p \in M$ we can define the set ``tangent space to the point $p$'' as
+    \[
+        T_pM := \{v_{\gamma, p} | \text{$\gamma$ smooth curves}\}
+    \]
+\end{definition}
+
+\begin{remark}
+    $T_pM$ can be made into a vector space.
+\end{remark}
+
+\begin{proof}
+    The strategy here is to define $\oplus$ and $\odot$ such that when we take two vectors from $T_pM$ and add them together, the result is still in $T_pM$, and the same goes for multiplication. Since the velocities are linear maps from the (supposedly) vector space into $\mathbb{R}$, we say that their addition and multiplication is part of $\text{Hom}(C^\infty, \mathbb{R})$. Then, we define addition as
+    \begin{align*}
+        \oplus: T_pM \times T_pM \longrightarrow \text{Hom}(C^\infty, \mathbb{R}) \\
+        (v_{\gamma,p} \oplus v_{\delta,p})(f) := v_{\gamma,p}(f) + v_{\delta,p}(f),
+    \end{align*}
+    and s-multiplication as
+    \begin{align*}
+        \odot: \mathbb{R} \times T_pM \longrightarrow \text{Hom}(C^\infty, \mathbb{R}) \\
+        (\alpha \odot v_{\gamma,p})(f) := \alpha \cdot v_{\gamma,p}(f).
+    \end{align*}
+    Now we need to show that:
+    \begin{itemize}
+        \item[i.] $\exists \; \tau$ curve such that $\alpha \odot v_{\gamma,p} = v_{\tau,p}$.
+        \item[ii.] $\exists \; \sigma$ curve such that $v_{\gamma, p} \oplus v_{\gamma,p} = v_{\sigma, p}$
+    \end{itemize}
+
+    We begin with the first item on the list by defining a curve
+    \begin{align*}
+        \tau: \mathbb{R} \longrightarrow M \\
+        \lambda \longmapsto \tau(\lambda) := \gamma(\alpha \lambda + \lambda_0) = (\gamma \circ \mu_a)(\lambda),
+    \end{align*}
+    where $\mu_\alpha: \mathbb{R} \longrightarrow \mathbb{R}$ such that $ r \longmapsto \alpha \cdot r + \lambda_0$, and we claim that this curve does the trick. Now,
+    \[
+        \tau(0) = \gamma(\lambda_0) = p
+    \]
+    so
+    \[
+        v_{\tau,p}:= (f \circ \tau)'(0) = (f \circ \gamma \circ \mu_a)'(0) = \alpha (f \circ \gamma)'(\lambda_0) = \alpha \cdot v_{\gamma,p}.
+    \]
+
+    Now, for the sum, we have to commit a sin: we pick a chart $(\mathcal{U},x)$ and apply it to the two curves we define: our $\gamma$ that passes through point $p$ at parameter value $\lambda_0$, and another $\delta$ that we say passes through point $p$ at parameter value $\lambda_1$. We claim that the curve
+    \[
+        \sigma_x(\lambda) := x^{-1}\left( (x \circ \gamma)(\lambda_0 + \lambda) + (x \circ \delta)(\lambda_1 + \lambda) - (x \circ \gamma)(\lambda_0) \right) 
+    \]
+    does the trick. What we do is: we calculate the values of the curves $\gamma$ and $\delta$ at the point $p$ and return it to the manifold via $x^{-1}$, so we are applying a chart, but we return from this chart. Of course this is still ill-defined since it is chart-dependent, but we'll see in the end that the result is chart-independent. The first step is to show that the curve $\sigma_x$ passes through point $p$, which we assume that occurs at $\lambda=0$:
+    \begin{IEEEeqnarray*}{rCl}
+        \sigma_x(0) & = & x^{-1}\left( (x \circ \gamma)(\lambda_0) + (x \circ \delta)(\lambda_1) - (x \circ \gamma)(\lambda_0) \right) \\
+        & = & x^{-1}((x \circ \gamma)(\lambda_1))\\
+        & = & \gamma(\lambda_1) = p.
+    \end{IEEEeqnarray*}
+    Now, we calculate the value of $v_{\sigma_x, p}$ and check if it is indeed equal to $v_{\gamma,p} + v_{\delta,p}$:
+    \begin{IEEEeqnarray*}{rCl}
+        v_{\sigma_x, p}(f) & := & (f \circ \sigma_x)'(0) \\
+        & = & ((f \circ x^{-1}) \circ (x \circ \sigma_x))'(0).
+    \end{IEEEeqnarray*}
+    In this second line, we can insert the identity map to make things easier. Now, since $f \circ x^{-1}: \mathbb{R}^d \longrightarrow \mathbb{R}$ and $x \circ \sigma_x : \mathbb{R} \longrightarrow \mathbb{R}^d$, we use the multidimensional chain rule to assess that:
+    \begin{IEEEeqnarray*}{rCl}
+        v_{\sigma_x,p}(f) & = & (x^i \circ \sigma_x)'(0) \cdot (\partial_i(f \circ x^{-1}))(x(\sigma_x(0))).
+    \end{IEEEeqnarray*}
+    Notation makes things a little convoluted, but what is happening here is that we are taking the inner derivative first (the term with $x^i$ in it) and evaluating at the point 0, and we have to do it component-wise because the entries of $x$ are in $\mathbb{R}^d$, and then we are taking the outer derivative (the term with $x^{-1}$ in it), but since the domain is in $\mathbb{R}^d$, we have to take the partial derivative with respect to the $i$-th component, and then we evaluate at the point $x(\sigma_x(0)) = x(p)$, the chart-valued $p$. Now, plugging the definition of $\sigma_x$ in the expression above yields:
+    \begin{IEEEeqnarray*}{rCl}
+        v_{\sigma_x, p}(f) & = & (x \circ x^{-1}\left( (x \circ \gamma)(\lambda_0 + \lambda) + (x \circ \delta)(\lambda_1 + \lambda) - (x \circ \gamma)(\lambda_0) \right) )^{i'} \cdot (\partial_i(f \circ x^{-1}))(x(p)) \\
+        & = & ((x\circ \gamma)^{i'}(\lambda_0) + (x \circ \delta)^{i'}(\lambda_1))\cdot (\partial_i(f \circ x^{-1}))(x(p)) \\
+        & = & (\partial_i(f \circ x^{-1}))(x(p)) \cdot (x\circ \gamma)^{i'}(\lambda_0) + (\partial_i(f \circ x^{-1}))(x(p)) \cdot (x\circ \delta)^{i'}(\lambda_0) \\
+        & = & (f \circ x^{-1} \circ x \circ \gamma)'(\lambda_0) + (f \circ x^{-1} \circ x \circ \delta)'(\lambda_1) \\
+        & = & (f \circ \gamma)'(\lambda_0) + (f \circ \delta)'(\lambda_1) \\
+        & = & v_{\gamma,p}(f) + v_{\delta,p}(f)
+    \end{IEEEeqnarray*}
+    as we wished to proof, and there is no dependency on the chart.
+\end{proof}
+
+This proof is not just a mathematical throw up, this is actually to be used within the calculations of general relativity.
+
+\subsubsection{Components of a vector with respect to a chart}
+To know the components of a vector, we need to know the basis of the tangent space.
+Let $(\mathcal{U},x) \in \mathcal{A}_{\text{smooth}}$. Let $\gamma : \mathbb{R} \longrightarrow \mathcal{U}$, and $\gamma(0) = p$. Calculate $v_{\gamma,p} := (f \circ \gamma)'(0)$:
+%
+\begin{IEEEeqnarray*}{rCl}
+    v_{\gamma,p}(f) & := & (f \circ \gamma)'(0) \\
+    & = & ((f \circ x^{-1}) \circ (x \circ \gamma))'(0) \\
+    & = & (x^i \circ \gamma)'(0) \cdot ( \partial_i(f \circ x^{-1}))(x(p))
+\end{IEEEeqnarray*}
+%
+The first thing to notice is that the index on $\partial_i$ tells us which entry to derive by. That is, it makes no reference whatsoever to $x$, but simply says ``what ever the $i$-th entry is, derive by that.``\footnote{.This is analogous to the fact that given $f:\mathbb{R} \longrightarrow \mathbb{R}$ we define $f':\mathbb{R} \longrightarrow \mathbb{R}$ completely independently of what variable we’re using. So $\dv{f}{x}$ is not a general expression, but is a notation choice once we have decided that $x$ is our variable.}  Now this is a lot of writing and so we introduce some new notation in order to simplify it: we define:
+%
+\begin{equation*}
+    \left(\pdv{f}{x^i}\right)_p := \partial_i(f \circ x^{-1}))(x(p)), \;\;\;\;\;\;\; \dot{\gamma}^i_x(0):= (x^i \circ \gamma)'(0),
+\end{equation*}
+%
+so we can write the velocity as
+%
+\begin{equation*}
+    v_{\gamma,p} f = \dot{\gamma}^i_x(0) \cdot \left(\pdv{x^i}\right)_p f
+\end{equation*}
+%
+and, as a map, it is
+%
+\begin{equation*}
+    v_{\gamma,p} = \dot{\gamma}^i_x(0) \cdot \left(\pdv{x^i}\right)_p.
+\end{equation*}
+
+\begin{definition}[Chart-induced basis]
+    We call 
+    \[
+        \left(\pdv{x^i}\right)_p
+    \]
+    the $i$-th element of the basis of $T_pM$. 
+\end{definition}
+
+\begin{definition}[Components w.r.t. chart induced basis]
+    We call
+    \[
+        \dot{\gamma}^i_x(0)
+    \]
+    the $i$-th component of a vector in $T_pM$.
+\end{definition}
+
+Notice that these elements are all dependent of the chart $(\mathcal{U},x)$ chosen at the beginning, so we say that this basis is a chart-induced basis of $T_pM$. However, we need to show that the elements $\pdv*{x^i}$ are linearly independent.
+\begin{proof}
+    We need to proof that
+    \[
+        \lambda_i \left(\pdv{x^i}\right)_p = 0 \Longleftrightarrow \lambda_i =0 \; \forall i \in \{1,...,d\}.
+    \]
+    The trick here is to apply it to a function that we choose to be $x^j$, then
+    \begin{IEEEeqnarray*}{rCl}
+        \lambda^i \left(\pdv{x_i}\right)_p (x^j) & = & \lambda_i \partial_i(x^j \circ x^i)'(x(p)) \\
+        & = & \lambda^i \delta_i^j = \lambda^j = 0
+    \end{IEEEeqnarray*}
+    So it means that every scalar $\lambda_j$ yields zero, henceforth, these elements are linearly independent.
+\end{proof}
+
+\begin{corollary}
+    $\emph{dim} \; T_pM = d = \emph{dim} \; M$.
+\end{corollary}
+
+The last thing to point out in this subsection is some terminology. If $X \in T_pM: \exists \; \gamma:\mathbb{R} \longrightarrow \mathbb{R}: X = v_{\gamma,p}$, and also $\exists \; (X^1, ..., X^d) \in \mathbb{R}: X = X^i \pdv*{x^i}$. This is a generalization of the chart-induced basis: we can choose other basis, as well, and a chart-induced basis is not the only way to do it. We can perfectly create a basis without picking a chart.
+
+\subsubsection{Change of vector components under a change of chart}
+A vector does not change under a change of chart simply because it is defined independently of a chart. What changes are the \emph{components} of a vector. The coordinate system we choose to look at our physical problem does not change the physics of the problem. All these concepts tight together with our initial idea that both charts and bases are just fantasies of the real world (or our description of real world): they help us to make calculations because they have more structure and more tools to work with, but the ``reality'' is independent of these fantasies.
+
+Let $(\mathcal{U},x)$ and $(\mathcal{V},y)$ be overlapping charts and $p \in \mathcal{U} \cap \mathcal{V}$. Let $X \in T_pM$, then we can write this vector using the chart $x$ and, independently, write this vector using chart $y$:
+\begin{equation}\label{x=x}
+    X_{(y)}^j \left(\pdv{y^j}\right)_p = X = X_{(x)}^i \left(\pdv{x^i}\right)_p
+\end{equation}
+The question is: how these two relate to one another? (and we know they do, since the object $X$ in the middle is invariant, so there needs to be a way to go from the left-most side to the right-most side). In order to study this change of components formula, consider:
+\begin{IEEEeqnarray*}{rCl}
+    \left(\pdv{x^i}\right)_p f &:= & \partial_i (f \circ x^{-1})(x(p)) \\
+    & = & \partial_i ((f \circ y^{-1}) \circ (y \circ x^{-1}))(x(p)) \\
+    & = & \partial_i (y^{j} \circ x^{-1})(x(p)) \cdot (\partial_j(f \circ y^{-1}))(y(p)) \\
+    & =: & \left( \pdv{y^j}{x} \right)_p \cdot \left( \pdv{y^j} \right)_p f
+\end{IEEEeqnarray*}
+
+Hence, we have that
+\begin{equation*}
+    X_{(x)}^i \left( \pdv{y^j}{x^i} \right)_p \cdot \left( \pdv{y^j} \right)_p =  X_{(y)}^j \left(\pdv{y^j}\right)_p,
+\end{equation*}
+which yields, plugging back into Eq.~\eqref{x=x}, to
+\begin{equation*}
+    \left[ X^i_{(x)} \left(\pdv{y^j}{x^i}\right)_p - X^j_{(y)}\right] \left(\pdv{y^j}\right)_p = 0.
+\end{equation*}
+
+Remember that the term outside of the square brackets is a base to the vector space induced by chart $(\mathcal{V},y)$, so everything in square brackets is zero, which finally yields
+\begin{equation} \label{vector-transition}
+    X^j_{(y)}= X^i_{(x)} \left(\pdv{y^j}{x^i}\right)_p.
+\end{equation}
+%
+These are the components of the same vector (real object) when we change from one chart (fantasy) to another.
+
+\subsection{Cotangent spaces}
+It is pretty trivial, with all that has been presented, that we consider the dual space of the $T_pM$, which is denoted as $T^*_pM$:
+
+\begin{definition}[Cotangent space]
+    Let $T_pM$ be the tangent space to the point $p \in M$. The dual of this space is called the cotangent space
+    \[
+        T^*_pM := \left\{ \phi : T_pM \xlongrightarrow[]{\sim} \mathbb{R} \right\}
+    \]
+\end{definition}
+
+\begin{example}
+    Let $f \in C^\infty(M)$, we can define
+    \[
+        (\dd{f})_p : T_pM \xlongrightarrow[]{\sim} \mathbb{R}
+    \]
+    such that
+    \[
+        X \longmapsto (\dd{f})_p(X) := Xf \in \mathbb{R}.
+    \]
+    which means that $(\dd{f})_p \in T^*_p M$.
+    The map $(\dd{f})_p$ is called the gradient of $f$ at the point $p \in M$. We can calculate the components of this gradient. To calculate the components of a $(0,1)$-tensor, we do as we defined earlier, which is to apply the tensor in the coordinates of the cotangent space:
+    \begin{IEEEeqnarray*}{rCl}
+        ((\dd{f})_p)_j & := & (\dd{f})_p \left( \left( \pdv{x^j} \right)_j \right) \\
+        & = & \left( \pdv{f}{x^j} \right)_p \\
+        & = & \partial_j (f \circ x^{-1})(x(p)).
+    \end{IEEEeqnarray*}
+    \qedwhite
+\end{example}
+
+\begin{theorem}
+    Consider a chart $(\mathcal{U},x)$ and chart maps $x^i : \mathcal{U} \longrightarrow \mathbb{R}$. Then,
+    \[
+        \{(\dd{x^1})_p, ..., \dd{x^d})_p\}
+    \]
+    is the dual basis of the dual space.
+\end{theorem}
+
+\begin{proof}
+    Simply apply the gradient to the elements of the basis of $T_pM$ and we get
+    \[
+        (\dd{x^a})_p \left( \left( \pdv{x^b} \right)_p \right) = \left(\pdv{x^a}{x^b}\right)_p = \delta^a_b,
+    \]
+    which is precisely what we want.
+\end{proof}
+
+\subsubsection{Change of components of a covector under a change of chart}
+The principle is really similar to the change of coordinates of a cotangent space once we change the chart. For example, let $\omega \in T^*_pM$, then
+\[
+    \omega_{(y)j} (\dd{y^j})_p = \omega = \omega_{(x)i} (\dd{x^i})_p,
+\]
+and the rule we need to use is
+\begin{equation} \label{omega=omega}
+    \omega_{(y)j} = \left( \pdv{x^i}{y^j} \right)_p \omega_{(x)i}. 
+\end{equation}
+
+
+
+
+
+\end{document}
